@@ -1,0 +1,21 @@
+{
+  "name": "timestamp-microservice",
+  "version": "1.0.0",
+  "description": "Basic API that returns a timestamp",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "api",
+    "timestamp"
+  ],
+  "repository": "https://github.com/Wilsonilo/freeCodeCampBackEnd",
+  "author": "Wilson Muñoz",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.4",
+    "moment": "^2.18.1"
+  }
+}

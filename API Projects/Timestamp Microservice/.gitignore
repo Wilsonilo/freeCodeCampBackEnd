@@ -1,0 +1,2 @@
+# Avoid modules from node.
+node_modules/
