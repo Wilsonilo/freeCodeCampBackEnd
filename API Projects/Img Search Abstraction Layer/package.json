@@ -1,0 +1,29 @@
+{
+  "name": "img-search-abstraction-layer",
+  "version": "1.0.0",
+  "description": "Img searcher API, uses imgurl API to avoid drama mixing more endpoints",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wilsonilo/freeCodeCampBackEnd.git"
+  },
+  "keywords": [
+    "api",
+    "nodejs",
+    "img"
+  ],
+  "author": "Wilson Muñoz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wilsonilo/freeCodeCampBackEnd/issues"
+  },
+  "homepage": "https://github.com/Wilsonilo/freeCodeCampBackEnd#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "mongodb": "^2.2.31"
+  }
+}
