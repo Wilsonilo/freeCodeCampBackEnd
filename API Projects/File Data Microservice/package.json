@@ -1,0 +1,30 @@
+{
+  "name": "file-metadata-microservice",
+  "version": "1.0.0",
+  "description": "file metada microservice",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wilsonilo/freeCodeCampBackEnd.git"
+  },
+  "keywords": [
+    "microservice",
+    "api",
+    "file",
+    "nodejs"
+  ],
+  "author": "Wilson Muñoz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wilsonilo/freeCodeCampBackEnd/issues"
+  },
+  "homepage": "https://github.com/Wilsonilo/freeCodeCampBackEnd#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "multer": "^1.3.0"
+  }
+}
