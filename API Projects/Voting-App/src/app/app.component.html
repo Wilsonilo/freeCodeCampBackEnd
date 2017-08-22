@@ -9,14 +9,17 @@
 			  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 			    <div class="navbar-nav">
 			      <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
-			      <a class="nav-item nav-link" href="/login" *ngIf="!isLogged">Login / Register </a>
-			      <a class="nav-item nav-link" href="/dashboard" *ngIf="isLogged">Dashboard </a>
+			      <a class="nav-item nav-link" href="/login" *ngIf="!isLogged">Login / Register</a>
+			      <a class="nav-item nav-link" href="/dashboard" *ngIf="isLogged">Dashboard</a>
+			      <a class="nav-item nav-link" href="/api/users/logout" *ngIf="isLogged">Logout</a>
+			      
 			      <!--<a class="nav-item nav-link" href="/about">About</a>
 			      <a class="nav-item nav-link disabled" href="#">iOS App</a>-->
 			    </div>
 			  </div>
 			</nav>
 			<router-outlet></router-outlet>
+			<hr>
 			<footer class="text-center">
 				<small><a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a> - Coded with <i class="material-icons">favorite</i> for <a href="http://freecodecamp.org" target="_blank">Freecodecamp</a> by <a href="https://www.twitter.com/yosoywil" target="_blank">@yosoywil</a></small>
 			</footer>

@@ -1,3 +1,66 @@
-<p>
-  Welcome back {{ User.username }}
-</p>
+<div class="row" style="margin-top:20px">
+	<div class="col">
+		<p class="align-middle">Welcome back {{ getUserName() }}</p>
+	</div>
+	<div class="col" align="right">
+		<button (click)="showFormForNewPoll()"  class="btn btn-outline-primary"> New Poll </button>
+	</div>
+	<hr>
+</div>
+<div class="row animated pulse" style="margin-top:20px" id="newPollFormDiv" *ngIf="newPoll">
+	<div class="col">
+		<hr>
+		<div class="alert alert-warning" *ngIf='errorUp'>{{ errorMsg }}</div>
+		<h3>Create new Poll:</h3>
+		<form [formGroup]="formNewPoll">
+		  <div class="form-group">
+		    <label for="question">Question</label>
+		    <input type="text" class="form-control" formControlName="question">
+		  </div>
+		  <div formArrayName="answers">
+			  <div *ngFor="let answer of formNewPoll.controls.answers.controls; let i=index" class="form-group">
+			  	<label for="answer{{i + 1}}">Answer {{i + 1}}</label>
+	            <span *ngIf="formNewPoll.controls.answers.controls.length > 1" (click)="removeAddress(i)">
+	            </span>
+	            <div [formGroupName]="i">
+	            	<input type="text" formControlName="answer" class="form-control">
+	                <!--display error message if street is not valid-->
+	                <small [hidden]="formNewPoll.controls.answers.controls[i].controls.answer.valid">
+	                    Answer is required.
+	                </small><br>
+	                <button (click)="removeAnswer(i)" class="btn btn-outline-danger btn-sm">remove</button>
+	                <hr>
+			    </div>
+			  </div>
+		  </div>
+		  <button (click)="createPoll(formNewPoll)" class="btn btn-primary" [disabled]="!formNewPoll.valid">Create</button>
+		  <button (click)="addAnswer()" class="btn btn-info">Add Answer</button>
+		</form>
+	</div>
+</div>
+<hr>
+<div class="row" style="margin-top:20px">
+	<div class="col animated fadeIn" *ngIf="emptypolls">
+		<div class="card" style="width: 20rem;">
+		  <h4 class="card-header">No polls yet :(</h4>
+		  <div class="card-body">
+		    <p class="card-text">Create your first poll and start sharing with your friends.</p>
+		    <button (click)="showFormForNewPoll()" class="btn btn-primary">Create my first poll</button>
+		  </div>
+		</div>
+	</div>
+</div>
+<div *ngIf="!emptypolls" class="row justify-content-center">
+	<div class="col-lg-4 col-md-6 animated flip" *ngFor="let poll of Polls" style="margin-top: 20px;">
+		<div class="card" style="width: 20rem;">
+			<h4 class="card-header">{{ poll.content.question }}</h4>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item" *ngFor="let i of poll.content.answers"> {{ i.answer }}</li>
+			</ul>
+			<div class="card-body">
+				<a class="btn btn-success" href="polls/{{ User.id }}/{{ poll.id }}" target="_blank">Share</a>
+				<button class="btn btn-danger" (click)="deletePoll(poll.id)">Delete</button>
+			</div>
+		</div>
+	</div>
+</div>

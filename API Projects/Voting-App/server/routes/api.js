@@ -49,22 +49,297 @@ routerAPI.get('/polls/top', (req, res) => {
   res.send('Will return a JSON with the latests 10 polls for home');
 });
 
-// Get top 10 polls
-routerAPI.get('/polls/:user', (req, res) => {
-  res.send('Will return a JSON with the polls of the :user');
+// Present Poll
+routerAPI.get('/polls/info/:iduser/:idpoll', (req, res) => {
+
+  var idUser    = req.params.iduser;
+  var idPoll    = req.params.idpoll;
+
+  console.log("New request for Poll:", idUser, idPoll);
+  if(idPoll !== undefined && idUser !== undefined){
+
+      console.log("Fetching information from user:"+ idUser);
+      var query = {'_id': idUser};
+
+      User.findOne(query).then(function(user){
+
+        console.log(user);
+
+        //Check if we can find user
+        if(user === null){
+
+            console.log('Can\'t find user')
+            res.end({'status': 'error', 'msg': 'Can\'t find user with this id.'});
+
+        } else {
+            
+            //Get polls
+            var polls = user.polls;
+
+            //Look for specific poll
+            var found = 0;
+            for(var i = 0; i < polls.length; i++){
+              
+              if(polls[i].id === idPoll){
+
+                //found Poll
+                found += 1;
+                
+                //Send information
+                res.send({'poll': polls[i], idpoll: idPoll, iduser: idUser})
+                res.end();
+                break;
+
+              }
+
+            }
+
+            if(found === 0){
+
+              //Can't find poll with that id.
+              console.log("Can't find that poll id ");
+              res.send({'status': 'error', 'msg': 'Can\'t find that poll id'});
+              res.end();
+
+            }
+
+        }
+
+      }, function(err){
+
+          console.log('Error fetching polls from user');
+          res.send({'error': 'Error fetching polls from user '+err+''});
+          res.end();
+
+    });
+
+  } else {
+      res.send({'status': 'error', 'msg': 'Can\'t find poll from this user.'});
+      res.end();
+  }
+
+});
+
+// Get polls from user.
+routerAPI.get('/polls/:iduser', (req, res) => {
+
+  var idUser = req.params.iduser;
+  if(idUser !== undefined){
+
+      console.log("Fetching information from user:"+ idUser);
+      var query = {'_id': idUser};
+      User.findOne(query).then(function(user){
+
+          console.log(user.polls.length);
+          res.send({'polls': user.polls});
+          res.end();
+
+      }, function(err){
+
+          console.log('Error fetching polls from user');
+          res.send({'error': 'Error fetching polls from user '+err+''});
+          res.end();
+
+    });
+
+  } else {
+      res.send({});
+      res.end();
+  }
+
 });
 
 //Create new Poll
 routerAPI.post('/polls/new', (req, res) => {
-  res.send('Will create a poll');
+  if(req.body !== undefined){
+
+      var userID    = req.body.userid;
+      var pollInfo  = req.body.poll;
+
+      //Check if exists if not save it.
+      User.findOne({'_id': userID}).then(function(user){
+        console.log(user);
+        //Check if we can find user
+        if(user === null){
+            res.end({'status': 'error', 'msg': 'Can\'t find user with this id.'});
+        } else {
+            user.polls.push(pollInfo);
+            user.save().then(function(user){
+              res.send({'status': 'success', 'msg': 'Poll created', id: req.body.poll.id});
+              res.end();
+            })
+        }
+      });
+
+  } else {
+
+    res.send({'status': 'error', 'msg': 'Can\'t fetch body'});
+    res.end();
+
+  }
+
 });
 
-//Create new Poll
-routerAPI.delete('/polls/delete/:id', (req, res) => {
-  res.send('Deletes a poll with an ID');
+//Delete Poll
+routerAPI.delete('/polls/delete/:userid/:idpoll', (req, res) => {
+
+  if(req.params !== undefined){
+
+      var userID    = req.params.userid;
+      var pollID    = req.params.idpoll;
+      console.log(userID, pollID);
+
+      //Ask Mongoose
+      User.findOne({'_id': userID}).then(function(user){
+        
+        console.log(user);
+
+        //Check if we can find user
+        if(user === null){
+            console.log('Can\'t find user')
+            res.end({'status': 'error', 'msg': 'Can\'t find user with this id.'});
+
+        } else {
+            
+            //https://stackoverflow.com/questions/14763721/mongoose-delete-array-element-in-document-and-save
+            var polls = user.polls;
+
+            //Look for that poll
+            var counterDeletes = 0;
+            for(var i = 0; i < polls.length; i++){
+              
+              if(polls[i].id === pollID){
+
+                //FoundOne
+                counterDeletes += 1;
+
+                // remove it from the array.
+                user.polls.splice(i, 1);
+
+                //save
+                user.save().then(function(updated){
+                  console.log("updated: ", updated);
+                });
+                break;
+
+              }
+
+            }
+
+            if(counterDeletes === 0){
+              //Can't find poll with that id.
+              console.log("Can't find that poll id ");
+              res.send({'status': 'error', 'msg': 'Can\'t find that poll id'});
+              res.end();
+
+            } else {
+
+              res.send({'status': 'success', 'msg': 'Polls updated'});
+              res.end();
+            }
+        }
+
+      });
+
+  } else {
+
+    res.send({'status': 'error', 'msg': 'Can\'t fetch body'});
+    res.end();
+
+  }
+
 });
 
+//Vote in poll
+routerAPI.post('/polls/vote', (req, res) => {
 
+    if(req.body !== undefined){
+
+      var userID    = req.body.userid;
+      var idPoll    = req.body.pollid;
+      var vote      = req.body.vote;
+
+      console.log(userID, idPoll, vote);
+      //Check if exists if not save it.
+      User.findOne({'_id': userID}).then(function(user){
+        
+        //console.log(user);
+        
+        //Check if we can find user
+        if(user === null){
+            res.end({'status': 'error', 'msg': 'Can\'t find user with this id.'});
+        } else {
+
+          //Look for poll
+          var polls = user.polls;
+          var answersFromPoll;
+          var userPolls;
+          //Look for specific poll
+          var foundPoll   = 0;
+          var foundAnswer = 0;
+          for(var i = 0; i < polls.length; i++){
+            
+            if(polls[i].id === idPoll){
+
+              //found Poll
+              foundPoll += 1;
+
+              //Look for answer
+              answersFromPoll = polls[i].content.answers;
+
+              //console.log(answersFromPoll);
+              
+              //Loop answers and update.
+              for(var o=0; o < answersFromPoll.length; o++){
+
+                if(answersFromPoll[o].answer === vote){
+                  //Found Answer
+                  foundAnswer += 1;
+
+                  //Increase
+                  if(answersFromPoll[o]['votes'] === undefined) {
+                    answersFromPoll[o].votes  = 1;
+                  } else {
+                    answersFromPoll[o]['votes'] += 1;
+                  }
+                  break;
+                }
+
+              }
+
+              //Save
+              user.polls[i].content.answers = answersFromPoll;
+              userPolls = user.polls;
+              break;
+            }
+
+          }
+
+          if(userPolls !== undefined) {
+
+            user.update({'polls': userPolls}).then(function(user){
+              console.log(user);
+            });
+            res.send({'status': 'success', 'msg': 'Voted.'});
+            res.end();
+
+          } else {
+
+            res.send({'status': 'error', 'msg': 'Problem proccesing vote.'});
+            res.end();
+          }
+            
+        }//Ends if(user === null){
+          
+      });
+
+    } else {
+
+      res.send({'status': 'error', 'msg': 'Can\'t fetch body'});
+      res.end();
+
+    }
+});
 
 ///////// PASSPORT
 passport.use(new LocalStrategy(
@@ -125,11 +400,10 @@ passport.use(new TwitterStrategy({
   function(token, tokenSecret, profile, done) {
 
     var usernameTwitter = profile.username;
-    
-    console.log(username);
+
 
     //First check if we have username
-    User.getUserByUsername(username, function(err, user){
+    User.getUserByUsername(usernameTwitter, function(err, user){
       
       //Check for error fetching
       if (err) { return done(err); }
@@ -142,6 +416,7 @@ passport.use(new TwitterStrategy({
             'username': usernameTwitter,
             'password': null
         });
+        newUser.save()
         return done(null, newUser);
 
       } else {
@@ -156,9 +431,19 @@ passport.use(new TwitterStrategy({
   }
 ));
 
+///////// AUTH for TWITTER
+
+//Twitter Handlers
+routerAPI.get('/auth/twitter', passport.authenticate('twitter'));
+
+routerAPI.get('/auth/twitter/callback',
+  passport.authenticate('twitter', { successRedirect: '/dashboard',
+                                     failureRedirect: '/login' }));
+
+
 ///////// USERS
 
-// Logins user
+// Logins user (username / password)
 routerAPI.post('/users/login',
 
   passport.authenticate('local'), 
@@ -168,14 +453,7 @@ routerAPI.post('/users/login',
 
 });
 
-//Twitter
-routerAPI.get('/auth/twitter', passport.authenticate('twitter'));
-
-routerAPI.get('/auth/twitter/callback',
-  passport.authenticate('twitter', { successRedirect: '/dashboard',
-                                     failureRedirect: '/login' }));
-
-// Registers user
+// Register user
 routerAPI.post('/users/register', (req, res) => {
 
   // Set vars
@@ -234,11 +512,22 @@ routerAPI.get('/users/logout', function(req, res) {
 
 });
 
+//Check Session of user.
+routerAPI.get('/users/session/',function(req, res){
+  console.log("running /users/session/ ", req.user);
+  if(req.user !== undefined){
+    res.send(JSON.stringify(req.user))
+    res.end();
+  } else {
+    res.send({})
+    res.end();
+  }
+});
+
 /* Catch all for the API on get that is not declared */
 routerAPI.get('*', (req, res) => {
   res.send('API to fetch information if functional, read documentation.');
   res.end();
 });
-
 
 module.exports = routerAPI;

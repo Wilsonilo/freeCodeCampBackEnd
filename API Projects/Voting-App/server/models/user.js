@@ -17,7 +17,8 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema(
 	{
     	username : String,
-    	password : String
+    	password : String,
+    	polls 	 : Array //Array of poll Objects
 	},
     { 
     	collection : 'usersvotingx' 
@@ -109,4 +110,10 @@ module.exports.comparePassword = function(candidatePassword, hashPassword, callb
     	callback(null, res);
 	});
 
+}
+
+//Add poll to user
+module.exports.pushPoll = function(poll, callback){
+	User.polls.push(poll);
+	User.save().then(callback);
 }

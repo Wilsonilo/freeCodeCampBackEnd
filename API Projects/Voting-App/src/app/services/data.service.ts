@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { User } from '../interfaces/user'
-import {Http} from '@angular/http';
+import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AppComponent } from '../app.component';
@@ -14,7 +14,7 @@ export class DataService{
 	private _user = new BehaviorSubject<User>(undefined);
 	userState = this._user.asObservable();
 	
-	constructor(http: Http){
+	constructor(public http: Http){
 
 	}
 

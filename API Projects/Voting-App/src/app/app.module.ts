@@ -4,6 +4,9 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
+//Imports
+import { ChartsModule } from 'ng2-charts';
+
 //Components
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -11,7 +14,8 @@ import { HomeComponent } from './home/home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 //Services
-import { DataService } from './services/data.service'
+import { DataService } from './services/data.service';
+import { PollComponent } from './poll/poll.component'
 
 // Define the routes
 const ROUTES = [
@@ -32,6 +36,10 @@ const ROUTES = [
     path: 'dashboard',
     component: DashboardComponent,
   },
+  {
+    path: 'polls/:iduser/:idpoll',
+    component: PollComponent,
+  }
 ];
 
 @NgModule({
@@ -39,12 +47,14 @@ const ROUTES = [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    DashboardComponent
+    DashboardComponent,
+    PollComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
+    ChartsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(ROUTES)
   ],
